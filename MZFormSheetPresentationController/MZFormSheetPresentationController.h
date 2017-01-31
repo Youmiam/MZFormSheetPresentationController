@@ -113,10 +113,10 @@ typedef NS_ENUM(NSInteger, MZFormSheetActionWhenKeyboardAppears) {
 @property (nonatomic) CGFloat backgroundVisibilityPercentage;
 
 /*
- The intensity of the blur effect. See UIBlurEffectStyle for valid options.
- By default, this is UIBlurEffectStyleLight
+ The intensity of the blur effect. 
+ By default, this is 4.0
  */
-@property (nonatomic, assign) UIBlurEffectStyle blurEffectStyle MZ_APPEARANCE_SELECTOR;
+@property (nonatomic, assign) CGFloat blurRadius MZ_APPEARANCE_SELECTOR;
 
 /*
  Apply background blur effect, this property need to be set before form sheet presentation
