@@ -29,12 +29,13 @@
 #import "MZMethodSwizzler.h"
 #import "MZFormSheetPresentationContentSizing.h"
 #import "MZFormSheetPresentationViewController.h"
+#import <FXBlurView/FXBlurView.h>
 
 CGFloat const MZFormSheetPresentationControllerDefaultAboveKeyboardMargin = 20;
 
 @interface MZFormSheetPresentationController () <UIGestureRecognizerDelegate>
 @property (nonatomic, strong) UIView *dimmingView;
-@property (nonatomic, strong) UIVisualEffectView *blurBackgroundView;
+@property (nonatomic, strong) FXBlurView *blurBackgroundView;
 @property (nonatomic, strong) MZBlurEffectAdapter *blurEffectAdapter;
 @property (nonatomic, strong) UITapGestureRecognizer *backgroundTapGestureRecognizer;
 
@@ -69,7 +70,7 @@ CGFloat const MZFormSheetPresentationControllerDefaultAboveKeyboardMargin = 20;
         [appearance setLandscapeTopInset:6.0];
         [appearance setShouldCenterHorizontally:YES];
         [appearance setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.5]];
-        [appearance setBlurEffectStyle:UIBlurEffectStyleLight];
+        [appearance setBlurRadius:4.0];
     }
 }
 
@@ -143,12 +144,12 @@ CGFloat const MZFormSheetPresentationControllerDefaultAboveKeyboardMargin = 20;
     }
 }
 
-- (void)setBlurEffectStyle:(UIBlurEffectStyle)blurEffectStyle {
-    if (_blurEffectStyle != blurEffectStyle) {
-        _blurEffectStyle = blurEffectStyle;
+- (void)setBlurRadius:(CGFloat)blurRadius {
+    if (_blurRadius != blurRadius) {
+        _blurRadius = blurRadius;
         if (self.shouldApplyBackgroundBlurEffect) {
             MZBlurEffectAdapter *blurEffect = self.blurEffectAdapter;
-            if (blurEffectStyle != blurEffect.blurEffectStyle) {
+            if (blurRadius != blurEffect.blurRadius) {
                 [self setupBackgroundBlurView];
             }
         }
@@ -188,11 +189,10 @@ CGFloat const MZFormSheetPresentationControllerDefaultAboveKeyboardMargin = 20;
     self.blurBackgroundView = nil;
     
     if (self.shouldApplyBackgroundBlurEffect) {
-        
-        self.blurEffectAdapter = [MZBlurEffectAdapter effectWithStyle:self.blurEffectStyle];
-        UIVisualEffect *visualEffect = self.blurEffectAdapter.blurEffect;
-        self.blurBackgroundView = [[UIVisualEffectView alloc] initWithEffect:visualEffect];
-        
+        self.blurBackgroundView = [[FXBlurView alloc] init];
+        self.blurBackgroundView.blurRadius = self.blurRadius;
+        self.blurBackgroundView.tintColor = [UIColor clearColor];
+        self.blurBackgroundView.underlyingView = self.presentingViewController.view;
         self.blurBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         
         self.blurBackgroundView.frame = self.dimmingView.bounds;
@@ -201,14 +201,6 @@ CGFloat const MZFormSheetPresentationControllerDefaultAboveKeyboardMargin = 20;
         
         self.dimmingView.backgroundColor = [UIColor clearColor];
         [self.dimmingView addSubview:self.blurBackgroundView];
-        
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
-        if ([UIViewPropertyAnimator class]) {
-            self.propertyAnimator = [[UIViewPropertyAnimator alloc] initWithDuration:1.0 curve:UIViewAnimationCurveLinear animations:^{
-                self.blurBackgroundView.effect = nil;
-            }];
-        }
-#endif
     } else {
         self.dimmingView.backgroundColor = self.backgroundColor;
     }
@@ -312,7 +304,7 @@ CGFloat const MZFormSheetPresentationControllerDefaultAboveKeyboardMargin = 20;
     self.dimmingView.frame = self.containerView.bounds;
     BOOL shouldTransitionBlur = [self shouldTransitionBlur];
     if (shouldTransitionBlur) {
-        self.blurBackgroundView.effect = nil;
+        self.blurBackgroundView = nil;
     } else {
         self.dimmingView.alpha = 0.0;
     }
@@ -326,7 +318,7 @@ CGFloat const MZFormSheetPresentationControllerDefaultAboveKeyboardMargin = 20;
     [self.presentedViewController.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
         [UIView animateWithDuration:[context transitionDuration] animations:^{
             if (shouldTransitionBlur) {
-                self.blurBackgroundView.effect = self.blurEffectAdapter.blurEffect;
+                self.blurBackgroundView.blurRadius = self.blurEffectAdapter.blurRadius;
             } else {
                 self.dimmingView.alpha = 1.0;
             }
