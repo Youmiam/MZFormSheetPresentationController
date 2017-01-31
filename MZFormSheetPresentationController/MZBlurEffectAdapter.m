@@ -27,16 +27,14 @@
 #import <objc/runtime.h>
 
 @interface MZBlurEffectAdapter ()
-@property (nonatomic, strong) UIBlurEffect *blurEffect;
-@property (nonatomic, assign) UIBlurEffectStyle blurEffectStyle;
+@property (nonatomic, assign) CGFloat blurRadius;
 @end
 
 @implementation MZBlurEffectAdapter
 
-+ (instancetype)effectWithStyle:(UIBlurEffectStyle)style {
++ (instancetype)effectWithBlurRadius:(CGFloat)blurRadius {
     MZBlurEffectAdapter *result = [[[self class] alloc] init];
-    result.blurEffect = [UIBlurEffect effectWithStyle:style];
-    result.blurEffectStyle = style;
+    result.blurRadius = blurRadius;    
     return result;
 }
 
