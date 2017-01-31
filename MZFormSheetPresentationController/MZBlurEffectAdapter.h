@@ -26,8 +26,8 @@
 @import UIKit;
 
 @interface MZBlurEffectAdapter : NSObject
-@property (nonatomic, readonly) UIBlurEffect *blurEffect;
-@property (nonatomic, readonly) UIBlurEffectStyle blurEffectStyle;
+@property (nonatomic, readonly) CGFloat blurRadius;
+    
++ (instancetype)effectWithBlurRadius:(CGFloat)blurRadius;
 
-+ (instancetype)effectWithStyle:(UIBlurEffectStyle)style;
 @end
