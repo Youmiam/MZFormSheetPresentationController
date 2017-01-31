@@ -9,6 +9,7 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   s.dependency 'MZAppearance'
+  s.dependency 'FXBlurView'
 
   s.source_files = 'MZFormSheetPresentationController/*.{h,m}'
 
