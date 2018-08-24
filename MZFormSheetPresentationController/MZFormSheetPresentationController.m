@@ -29,7 +29,7 @@
 #import "MZMethodSwizzler.h"
 #import "MZFormSheetPresentationContentSizing.h"
 #import "MZFormSheetPresentationViewController.h"
-#import <FXBlurView/FXBlurView.h>
+#import <YMMBlurView/FXBlurView.h>
 
 CGFloat const MZFormSheetPresentationControllerDefaultAboveKeyboardMargin = 20;
 
